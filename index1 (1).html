@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Office Roast Board 🔥</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;700&display=swap"
+    rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0e0e0e;
+      --card: #161616;
+      --border: #2a2a2a;
+      --accent: #ff4d00;
+      --accent2: #ffcc00;
+      --text: #f0f0f0;
+      --muted: #666;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: "DM Sans", sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0.4;
+    }
+
+    #homePage {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      position: relative;
+    }
+
+    .bg-glow {
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #ff4d0015 0%, transparent 70%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    .home-label {
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+
+    .home-title {
+      font-family: "Bebas Neue", cursive;
+      font-size: clamp(4rem, 12vw, 9rem);
+      line-height: 0.9;
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    .home-title span {
+      display: block;
+      color: var(--accent2);
+    }
+
+    .home-title .outline {
+      color: transparent;
+      -webkit-text-stroke: 2px var(--text);
+      opacity: 0.15;
+    }
+
+    .home-subtitle {
+      color: var(--muted);
+      font-size: 1rem;
+      text-align: center;
+      margin-bottom: 48px;
+      font-weight: 300;
+    }
+
+    .search-box {
+      width: 100%;
+      max-width: 480px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px;
+      position: relative;
+    }
+
+    .search-box::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #ff4d0033, transparent, #ffcc0022);
+      z-index: -1;
+    }
+
+    .search-label {
+      font-size: 0.7rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .search-input-wrap {
+      display: flex;
+      gap: 10px;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      background: #1e1e1e;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 18px;
+      font-family: "DM Sans", sans-serif;
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--accent);
+    }
+
+    input[type="text"]::placeholder {
+      color: #3a3a3a;
+    }
+
+    .go-btn {
+      background: var(--accent);
+      border: none;
+      border-radius: 12px;
+      padding: 14px 22px;
+      color: white;
+      font-family: "Bebas Neue", cursive;
+      font-size: 1.2rem;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .go-btn:hover {
+      background: #e04400;
+    }
+
+    .go-btn:active {
+      transform: scale(0.96);
+    }
+
+    .error-msg {
+      margin-top: 14px;
+      color: #ff6b6b;
+      font-size: 0.85rem;
+      font-weight: 500;
+      display: none;
+      text-align: center;
+    }
+
+    .member-count {
+      margin-top: 24px;
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .member-count strong {
+      color: var(--accent2);
+    }
+
+    /* RESULT PAGE */
+    #resultPage {
+      display: none;
+      min-height: 100vh;
+      padding: 40px 20px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .back-btn {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 16px;
+      color: var(--muted);
+      font-family: "DM Sans", sans-serif;
+      font-size: 0.85rem;
+      cursor: pointer;
+      margin-bottom: 40px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+
+    .back-btn:hover {
+      color: var(--text);
+      border-color: var(--text);
+    }
+
+    .result-animal-emoji {
+      font-size: 5rem;
+      display: block;
+      margin-bottom: 12px;
+      animation: bounceIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes bounceIn {
+      from {
+        opacity: 0;
+        transform: scale(0.4) rotate(-10deg);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+      }
+    }
+
+    .result-greeting {
+      font-size: 0.75rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .result-name {
+      font-family: "Bebas Neue", cursive;
+      font-size: clamp(3rem, 10vw, 5.5rem);
+      line-height: 1;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .result-animal-label {
+      font-size: 0.9rem;
+      color: var(--accent);
+      font-weight: 500;
+      margin-bottom: 32px;
+    }
+
+    .info-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .info-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      animation: slideUp 0.4s ease both;
+    }
+
+    .info-card.full {
+      grid-column: 1 / -1;
+    }
+
+    .info-card.accent-card {
+      border-color: var(--accent);
+      background: #ff4d0010;
+    }
+
+    .info-card.gold-card {
+      border-color: var(--accent2);
+      background: #ffcc0008;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .card-icon {
+      font-size: 1.6rem;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .card-label {
+      font-size: 0.65rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .card-value {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.3;
+    }
+
+    .crutch-value {
+      font-family: "Bebas Neue", cursive;
+      font-size: 1.8rem;
+      color: var(--accent2);
+      letter-spacing: 1px;
+      line-height: 1.1;
+    }
+
+    .funny-img-wrap {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 16px;
+      animation: slideUp 0.5s 0.2s ease both;
+      position: relative;
+    }
+
+    .funny-img-wrap img {
+      width: 100%;
+      max-height: 280px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .img-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 12px 16px;
+      background: linear-gradient(transparent, #000000cc);
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.6);
+      font-style: italic;
+    }
+
+    .video-wrap {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 16px;
+      animation: slideUp 0.6s 0.3s ease both;
+    }
+
+    .video-wrap iframe {
+      width: 100%;
+      height: 280px;
+      display: block;
+      border: none;
+    }
+
+    .video-caption {
+      padding: 10px 16px;
+      font-size: 0.85rem;
+      color: var(--accent2);
+      font-weight: 600;
+      text-align: center;
+      background: #ffcc0010;
+    }
+
+    .share-line {
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+
+    @media (max-width: 400px) {
+      .info-cards {
+        grid-template-columns: 1fr;
+      }
+
+      .info-card.full {
+        grid-column: 1;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- HOME PAGE -->
+  <div id="homePage">
+    <div class="bg-glow"></div>
+    <div class="home-label">🔥 Office Roast Board</div>
+    <h1 class="home-title">
+      <span>WHO</span>
+      <span>ARE</span>
+      <div class="outline">YOU?</div>
+    </h1>
+    <p class="home-subtitle">
+      Enter your name to discover your office identity 👀
+    </p>
+    <div class="search-box">
+      <span class="search-label">Your Name</span>
+      <div class="search-input-wrap">
+        <input type="text" id="nameInput" placeholder="e.g. Ravi Kumar" autocomplete="off"
+          onkeydown="if(event.key==='Enter') lookup()" />
+        <button class="go-btn" onclick="lookup()">GO 🔥</button>
+      </div>
+      <div class="error-msg" id="errorMsg"></div>
+    </div>
+    <div class="member-count">
+      <strong id="memberCount">30</strong> office members registered
+    </div>
+  </div>
+
+  <!-- RESULT PAGE -->
+  <div id="resultPage">
+    <button class="back-btn" onclick="goBack()">← Back</button>
+    <div class="result-header">
+      <span class="result-animal-emoji" id="resAnimalEmoji"></span>
+      <div class="result-greeting">Hello there,</div>
+      <div class="result-name" id="resName"></div>
+      <div class="result-animal-label" id="resAnimalLabel"></div>
+    </div>
+    <div class="info-cards">
+      <div class="info-card accent-card full" style="animation-delay: 0.05s">
+        <span class="card-icon">🗣️</span>
+        <div class="card-label">Your Crutch Word</div>
+        <div class="crutch-value" id="resCrutch"></div>
+      </div>
+      <div class="info-card gold-card" style="animation-delay: 0.1s">
+        <span class="card-icon">🐾</span>
+        <div class="card-label">Your Office Animal</div>
+        <div class="card-value" id="resAnimal"></div>
+      </div>
+      <div class="info-card" style="animation-delay: 0.15s">
+        <span class="card-icon">💬</span>
+        <div class="card-label">Why This Animal</div>
+        <div class="card-value" id="resAnimalReason"></div>
+      </div>
+      <div class="info-card full" style="animation-delay: 0.2s">
+        <span class="card-icon">📝</span>
+        <div class="card-label">Personal Message</div>
+        <div class="card-value" id="resMessage"></div>
+      </div>
+    </div>
+    <div class="funny-img-wrap" id="funnyImgWrap">
+      <img id="funnyImg" src="" alt="Funny animal" />
+      <div class="img-overlay" id="imgCaption"></div>
+    </div>
+    <div class="video-wrap" id="videoWrap" style="display:none;">
+      <iframe id="videoFrame" src="" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+      <div class="video-caption" id="videoCaption"></div>
+    </div>
+    <div class="share-line">
+      🔥 Office Roast Board — You've been identified!
+    </div>
+  </div>
+
+  <script>
+    // ✏️ EDIT YOUR MEMBERS BELOW
+    const members = {
+      "ravi kumar": {
+        crutch: "Python la allukupothadu!",
+        animal: "Python Snake 🐍", emoji: "🐍",
+        reason: "Slithers into every situation silently",
+        message: "Ammayilanu Python tho attract chestunte, bugs kuda disappear avuthayi! 😂",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Snake_River_%285mb%29.jpg/1280px-Snake_River_%285mb%29.jpg",
+        imgCaption: "Python master in his natural habitat 🐍"
+      },
+      "krishna": {
+        crutch: "my petrol was stolen!",
+        animal: "Bull 🐂", emoji: "🐂",
+        reason: "Charges full speed ahead, no stopping!",
+        message: "Petrol ayipoyina bull still runs on anger! 😂",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Bull_in_field.jpg/1280px-Bull_in_field.jpg",
+        imgCaption: "This is you on a Monday morning 🐂"
+      },
+      "madhu": {
+        crutch: "All Rounder!",
+        animal: "Cheetah 🐆", emoji: "🐆",
+        reason: "Fastest and strongest — the true pillar of the office!",
+        message: "Madhu bhai — office ante nuvve! Pillar of the team, All Rounder, without you office runs on 0%! 💪🔥",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/TheCheethcat.jpg/1200px-TheCheethcat.jpg",
+        imgCaption: "The fastest, the strongest — Madhu the Cheetah 🐆",
+      },
+      "karthik": {
+        crutch: "anna danger candidate anna nuvvu!",
+        animal: "Owl 🦉", emoji: "🦉",
+        reason: "Wise but always questioning everything",
+        message: "Anna, wisdom tho anni questions ki answers ivvagalavu! 🤣",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/CaughtInTheAct.jpg/800px-CaughtInTheAct.jpg",
+        imgCaption: "Questioning everything since day 1 🦉"
+      },
+      "balu": {
+        crutch: "lot of beers vunnayi nidananga taagudam",
+        animal: "Panda 🐼", emoji: "🐼",
+        reason: "Chill and mysterious, hard to read",
+        message: "Life is as simple as ABCDEFG — just like you! 😆",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Grosser_Panda.JPG/800px-Grosser_Panda.JPG",
+        imgCaption: "Chilling like ABCDEFG 🐼"
+      },
+      "bangaru babu": {
+        crutch: "Goldie!",
+        animal: "Golden Retriever 🐕", emoji: "🐕",
+        reason: "Everyone's favourite, always happy",
+        message: "Office lo golden boy — bangaru babu lives up to the name! 💛",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/YellowLabradorLooking_new.jpg/1200px-YellowLabradorLooking_new.jpg",
+        imgCaption: "Golden and glorious 🐕"
+      },
+      "dn arjun reddy": {
+        crutch: "Powerful assistant manager!",
+        animal: "Lion 🦁", emoji: "🦁",
+        reason: "Commands the room, born leader",
+        message: "cricketer- batsmen,bowler,keeper — assistant manager to the core! 💪",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Lion_waiting_in_Namibia.jpg/1280px-Lion_waiting_in_Namibia.jpg",
+        imgCaption: "The boss has entered the building 🦁"
+      },
+      "sandeep": {
+        crutch: "powerful manager",
+        animal: "Lion 🦁", emoji: "🦁",
+        reason: "Commands the room, born leader",
+        message: " Lion of the office! 😄",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Lion_waiting_in_Namibia.jpg/1280px-Lion_waiting_in_Namibia.jpg",
+        imgCaption: "The lion has spoken 🦁"
+      },
+      "pasha": {
+        crutch: "Now in roza, leave him!",
+        animal: "Sleeping Cat 😴", emoji: "😴",
+        reason: "Peaceful, undisturbed, in his own world",
+        message: "Roza lo undi — do not disturb the sleeping legend! 🙏",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Cat_November_2010-1a.jpg/1200px-Cat_November_2010-1a.jpg",
+        imgCaption: "Currently unavailable, in roza 😴"
+      },
+      "praveen": {
+        crutch: "Kannalu esukune vaadi la vunnav!",
+        animal: "Eagle 🦅", emoji: "🦅",
+        reason: "Sharp eyes, misses absolutely nothing",
+        message: "Kannalu esukuna eagle — office lo emi jarigina telusthundi! 👀",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Bald_Eagle_Portrait.jpg/1200px-Bald_Eagle_Portrait.jpg",
+        imgCaption: "Those eyes see EVERYTHING 🦅"
+      },
+      "teja": {
+        crutch: "Tokyo Jonnie!",
+        animal: "Tiger 🐯", emoji: "🐯",
+        reason: "Wild energy, unpredictable and exciting",
+        message: "Tokyo Jonnie vibes — international tiger of the office! 🐯",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Walking_tiger_female.jpg/1280px-Walking_tiger_female.jpg",
+        imgCaption: "Tokyo Jonnie has entered the chat 🐯"
+      },
+      "harish": {
+        crutch: "Jimbow!",
+        animal: "Elephant 🐘", emoji: "🐘",
+        reason: "Never forgets anything, strong memory",
+        message: "Jimbow the elephant — remembers every single thing you said! 🐘",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/African_Bush_Elephant.jpg/1200px-African_Bush_Elephant.jpg",
+        imgCaption: "Jimbow never forgets 🐘"
+      },
+      // ── ADD MORE MEMBERS BELOW
+      "venu": {
+        crutch: "Anna kindaki podam pa",
+        animal: "monkey", emoji: "🐒",
+        reason: "Energetic and always monkeying around",
+        message: "hard hitter in cricket — venu rocks! 😂", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/Capuchin_Costa_Rica.jpg/1200px-Capuchin_Costa_Rica.jpg",
+        imgCaption: "This is your energy level at 9am 🐒"
+      },
+      "manikanta": {
+        crutch: "nenu amayakudin anna", animal: "Dog 🐶", emoji: "🐶", reason: "Loyal and always there for the team",
+        message: "Bhai manikanta — most loyal member of the pack! 🐶",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/YellowLabradorLooking_new.jpg/1200px-YellowLabradorLooking_new.jpg",
+        imgCaption: "Loyal to the core 🐶"
+      },
+      "praneeth": {
+        crutch: "Trust me bro!",
+        animal: "Wolf 🐺", emoji: "🐺",
+        reason: "Pack leader, strategic thinker,visionary leader ,opener, allrounder",
+        message: "Trust me bro — wolf knows the way! 🐺",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Kolm%C3%A5rden_Wolf.jpg/1200px-Kolm%C3%A5rden_Wolf.jpg",
+        imgCaption: "The lone wolf of the office 🐺"
+      },
+      "ravi teja": {
+        crutch: "Basically...",
+        animal: "Butterfly 🦋", emoji: "🦋",
+        reason: "Transforms every idea into something beautiful",
+        message: "Basically... you make everything better! 🦋",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Monarch_Butterfly_Danaus_plexippus.jpg/1200px-Monarch_Butterfly_Danaus_plexippus.jpg",
+        imgCaption: "Basically the best 🦋"
+      },
+      "srikesh": {
+        crutch: "na job eppudu potado emo",
+        animal: "fox 🦊 ", emoji: "🦊",
+        reason: "thinks two steps ahead",
+        message: "Actually... you do 10 things at once! 🦊",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Vulpes_vulpes_ssp_fulvus.jpg/1280px-Vulpes_vulpes_ssp_fulvus.jpg",
+        imgCaption: "Smartest fox in the office 🦊"
+      },
+
+      "swaroop": {
+        crutch: "Going forward...",
+        animal: "Horse 🐴",
+        emoji: "🐴",
+        reason: "Always moving forward, unstoppable",
+        message: "Going forward — nobody can stop this horse! 🐴",
+        video: "https://drive.google.com/file/d/1v80_ywhgGe6dNHNyLISzlXCVBhmXKXra/preview?autoplay=1",
+        videoCaption: "🎬 Swaroop entering Khansaar — Salaar style 🔥"
+      },
+
+      "deepak": {
+        crutch: "At the end of the day...",
+        animal: "Bear 🐻",
+        emoji: "🐻",
+        reason: "Big presence, calm but powerful",
+        message: "At the end of the day — the bear always wins! 🐻",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/2010-kodiak-bear-1.jpg/1200px-2010-kodiak-bear-1.jpg",
+        imgCaption: "Big bear energy 🐻"
+      },
+
+      "madhu bhai": {
+        crutch: "annaaaa",
+        animal: "Dolphin 🐬",
+        emoji: "🐬",
+        reason: "Smart, friendly and loves to communicate",
+        message: " fastest wicket keeper 🐬",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Bottlenose_Dolphin_KSC04pd0178.jpg/1200px-Bottlenose_Dolphin_KSC04pd0178.jpg",
+        imgCaption: "Honestly the best 🐬"
+      },
+
+      "venky": {
+        crutch: "You know what I mean?",
+        animal: "bunty 🐻",
+        emoji: "🐻",
+        reason: "hitter opener of office cricket team ",
+        message: "You know what I mean? — Fastest bat every time! 🐻",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/2010-kodiak-bear-1.jpg/1200px-2010-kodiak-bear-1.jpg",
+        imgCaption: "Big bear energy in the office 🐻 "
+      },
+
+      "chiranthan": {
+        crutch:"intankalla",
+        animal: "panda 🐼",
+        emoji:"🐼",
+        reason:"he looks like pig face but we named him panda",
+        message:"intelligent,cunning,mannerless idiot",
+        img:"https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Grosser_Panda.JPG/800px-Grosser_Panda.JPG",
+        imgCaption:"panda enjoyin in bangkok 🐼"
+      },
+
+    }  
+
+    document.getElementById('memberCount').textContent = Object.keys(members).length;
+
+    function lookup() {
+      const input = document.getElementById('nameInput').value.trim();
+      const errorMsg = document.getElementById('errorMsg');
+      if (!input) {
+        errorMsg.style.display = 'block';
+        errorMsg.textContent = '⚠️ Please enter your name!';
+        return;
+      }
+      const key = Object.keys(members).find(k => k.toLowerCase() === input.toLowerCase());
+      if (!key) {
+        errorMsg.style.display = 'block';
+        errorMsg.textContent = `😕 "${input}" not found! Check spelling. `;
+        return;
+      }
+      errorMsg.style.display = 'none';
+      showResult(key, members[key]);
+    }
+
+    function showResult(name, data) {
+      document.getElementById('resAnimalEmoji').textContent = data.emoji;
+      document.getElementById('resName').textContent = name.toUpperCase();
+      document.getElementById('resAnimalLabel').textContent = '🐾 ' + data.animal;
+      document.getElementById('resCrutch').textContent = '"' + data.crutch + '"';
+      document.getElementById('resAnimal').textContent = data.animal;
+      document.getElementById('resAnimalReason').textContent = data.reason;
+      document.getElementById('resMessage').textContent = data.message;
+      const imgWrap = document.getElementById('funnyImgWrap');
+      const img = document.getElementById('funnyImg');
+      if (data.img) {
+        img.src = data.img;
+        document.getElementById('imgCaption').textContent = data.imgCaption || '';
+        imgWrap.style.display = 'block';
+      } else {
+        imgWrap.style.display = 'none';
+      }
+      const videoWrap = document.getElementById('videoWrap');
+      const videoFrame = document.getElementById('videoFrame');
+      if (data.video) {
+        videoFrame.src = data.video;
+        document.getElementById('videoCaption').textContent = data.videoCaption || '';
+        videoWrap.style.display = 'block';
+      } else {
+        videoFrame.src = '';
+        videoWrap.style.display = 'none';
+      }
+      document.getElementById('homePage').style.display = 'none';
+      document.getElementById('resultPage').style.display = 'block';
+      window.scrollTo(0, 0);
+    }
+
+    function goBack() {
+      document.getElementById('resultPage').style.display = 'none';
+      document.getElementById('homePage').style.display = 'flex';
+      document.getElementById('nameInput').value = '';
+      document.getElementById('videoFrame').src = '';
+      window.scrollTo(0, 0);
+    }
+  </script>
+</body>
+
+</html>
